@@ -1,0 +1,27 @@
+{
+  "summary": "Iteration 2 regression cobre 'Confirmação automática' (lembretes de véspera com Twilio DESATIVADO neste ambiente) e 'Insumos por serviço' + dedução de estoque ao concluir agendamento. Backend: 17/17 pytest passaram (config Twilio false/sandbox true, GET /vespera com telefone_e164 +55… e datas com Z, PUT mensagem OK/422/404, POST /enviar canal whatsapp_link marca enviado e cria registro em /lembretes/, POST /enviar canal twilio→503, POST /enviar-todos→503, SSE /ai/lembretes-vespera com total→N eventos→done, POST /servicos/{id}/insumos com validação 422/404 e upsert (retorna list[relacao] com length correto), DELETE 204/404, delete servico remove vínculos, insumos aceitam float, concluir deduz estoque + emite alertas_estoque, concluir duplicado NÃO deduz de novo, estoque insuficiente→409). Frontend: login admin OK; card-lembretes-vespera com twilio-off-note; btn-enviar-todas e vespera-send-<id> desabilitados; btn-gerar-todas-ia preenche progressivamente vespera-msg-<id> (~5-15s por mensagem); status badges 'pronta'/'enviado HH:MM'; edição no textarea + blur persiste após reload; wa link href com prefixo https://wa.me/ e query ?text=; btn-vespera-refresh presente; Configurações: 5 serviços, btn-toggle-insumos-<id> mostra painel servico-insumos-<id>, select lista insumos disponíveis, add cria linha si-<sid>-<iid> e contador '(N)' atualiza, del remove; Agenda: btn-concluir-<id> exibe toast 'Atendimento concluído — estoque atualizado'; Estoque/Financeiro carregam.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {"ui_bugs": [], "integration_issues": [], "design_issues": []},
+  "test_report_links": [
+    "/app/backend/tests/test_lembretes_insumos.py",
+    "/app/backend/tests/backend_test.py",
+    "/app/test_reports/pytest/iter2_results.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "POST /api/servicos/{id}/insumos retorna list[ServicoInsumoResponse] (todas as relações do serviço) com 201 mesmo em UPSERT. Semanticamente 200 seria mais correto em upsert, mas frontend usa o retorno para repopular a lista, então funcional. Documentar no OpenAPI se importar.",
+    "listar_amanha inclui status 'confirmado' e 'pendente' (const STATUS_ATIVOS); status 'concluido' corretamente excluído. Fuso America/Sao_Paulo via janela_dia(1) — OK.",
+    "_deduzir_insumos idempotente pela guarda `doc[\"status\"] != \"concluido\"` — confirmado via teste.",
+    "Registro em /lembretes/ salva canal='whatsapp_link:+55…' preservando telefone; útil para auditoria."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_lembretes_insumos.py (novo — 17 casos)"
+  ],
+  "success_rate": {"backend": "100% (17/17 novos + 26/26 regressão anterior)", "frontend": "100% dos fluxos das 2 features + regressão"},
+  "test_credentials": "admin@elo.beauty/elo123456",
+  "seed_data_creation": "Testes criam/deletam TEST_ServVinc, TEST_Insumo_Vinc, TEST_ServDelVinc, TEST_InsDelVinc, TEST_ServCon, TEST_InsCon, TEST_ServInsuf, TEST_InsInsuf, TEST_Float e agendamentos correspondentes; teardown implícito por delete no final. Um dos 2 agendamentos-seed de amanhã foi marcado como enviado (whatsapp_link) pelos testes — reversível via PUT lembrete.enviado_em=null se necessário.",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "Backend endpoints das novas features: GET /api/lembretes/config, GET/PUT /api/lembretes/vespera[/{id}], POST /api/lembretes/vespera/{id}/enviar (canal 'whatsapp_link' ou 'twilio'), POST /api/lembretes/vespera/enviar-todos (503 sem Twilio), POST /api/ai/lembretes-vespera (SSE), GET/POST/DELETE /api/servicos/{id}/insumos[/{insumo_id}], PATCH /api/agendamentos/{id}/concluir (deduz + alertas_estoque). Login por form: primeiro clicar 'Entrar na plataforma' na landing, depois preencher email/senha e submit (não há data-testid nos inputs). data-testids frontend: card-lembretes-vespera, twilio-off-note, btn-gerar-todas-ia, btn-enviar-todas, btn-vespera-refresh, vespera-<id>, vespera-msg-<id>, vespera-status-<id>, vespera-wa-<id>, vespera-send-<id>, servico-<id>, btn-toggle-insumos-<id>, servico-insumos-<id>, form-si-insumo-<sid>, form-si-qtd-<sid>, btn-add-si-<sid>, si-<sid>-<iid>, btn-del-si-<sid>-<iid>, btn-concluir-<id>. Twilio propositalmente NÃO configurado neste ambiente.",
+  "rca of the issue": "Nenhum bug encontrado — ambas features aprovadas backend+frontend."
+}
