@@ -1,0 +1,34 @@
+{
+  "summary": "Full-stack regression run após migração para MongoDB, IA Claude Sonnet 4.5 (SSE) e login Google Emergent-managed. Backend: 26/26 pytest passaram (auth JWT/register/me, Google session simulada via user_sessions, CRUD servicos/insumos/profissionais/agendamentos com IDs string sem _id, conflict 409, estoque alertas, financeiro, dashboard, lembretes, débitos, chat streaming multi-turno, histórico e gerar-mensagem). Frontend: Landing carrega os 3 botões, login pré-preenchido loga admin, chat mantém bolha de boas-vindas + user/bot separadas com streaming, contexto multi-turno preservado (assistente lembrou 'Roberto'), reload restaura histórico, nova-conversa reinicia, gerar mensagem IA preenche textarea, registro de nova conta funciona, e-mail duplicado exibe 'E-mail já cadastrado' em login-error, auth-switch-mode alterna modos, agendamento create→concluir→delete completo (form-hora é type=time e usa a data da aba do dia), lembrete registrado aparece na lista, todas as páginas /app/* carregam, logout via nav-account-security redireciona para / e bloqueia /app/agenda sem sessão. Botão Google inicia OAuth Emergent (redirect para accounts.google.com via demobackend.emergentagent.com).",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [
+      {"screen": "Atendimento — card 'Envie um lembrete pelo WhatsApp'", "issues": ["Campo 'Número (DDI + DDD)' não tem data-testid (não é input-numero/input-telefone/input-cliente-tel). Registro funcionou sem telefone; considerar adicionar data-testid='input-numero' para testabilidade."]}
+    ]
+  },
+  "test_report_links": [
+    "/app/backend/tests/backend_test.py",
+    "/app/test_reports/pytest/pytest_results.xml"
+  ],
+  "action_items": [
+    "(Opcional/baixa prioridade) Adicionar data-testid='input-numero' ao input de telefone do card de lembrete em Atendimento.jsx para completar cobertura de testes"
+  ],
+  "critical_code_review_comments": [
+    "Problem statement listou 'password' como field no login/register, mas o backend usa 'senha' (LoginRequest/RegisterRequest). Frontend está consistente (usa senha). Testes ajustados. Documentação do problem_statement precisa alinhamento.",
+    "Endpoint /api/agendamentos usa campo body 'data_hora_inicio' (não 'inicio'); /api/servicos usa 'duracao_minutos' (não 'duracao_min'); /api/lembretes exige 'canal' obrigatório. Nenhum bug — apenas divergência com a descrição do problem statement.",
+    "Todos endpoints retornaram documentos SEM `_id` e com `id` string (validação PyObjectId ok).",
+    "IA SSE emitido corretamente com session_id → deltas → done=true; multi-turno persiste contexto (chat_messages)."
+  ],
+  "updated_files": [
+    "/app/backend/tests/backend_test.py"
+  ],
+  "success_rate": {"backend": "100% (26/26)", "frontend": "100% dos fluxos principais"},
+  "test_credentials": "admin@elo.beauty/elo123456 (JWT), qa@elo.beauty/qa123456 (existente, usado para 409), google.tester@example.com (session simulada via mongosh)",
+  "seed_data_creation": "Sessão Google simulada criada e removida no teste; agendamentos/lembretes/serviços TEST_ criados e deletados no teardown dos testes.",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "Field names reais do backend: senha (não password), data_hora_inicio (não inicio), duracao_minutos (não duracao_min), lembrete exige 'canal'. form-hora é type='time' (só HH:MM) — a data é herdada da aba do dia selecionada em Agenda. Botão Google Emergent redireciona para accounts.google.com via demobackend.emergentagent.com/auth/v1/env/oauth/callback — não é possível completar em automação. Backend em https://elo-beauty-redesign.preview.emergentagent.com/api. 26 testes pytest em /app/backend/tests/backend_test.py cobrem CRUD, IA SSE (multi-turno com verificação de contexto 'Roberto/Carlos') e sessão Google simulada.",
+  "rca of the issue": "Nenhum bug crítico encontrado. Ajustes menores nos testes para alinhar nomes de campos (senha, data_hora_inicio, duracao_minutos, canal) — problem_statement listou nomes divergentes do código real, mas o backend está consistente com o frontend."
+}
