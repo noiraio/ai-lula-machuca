@@ -2,17 +2,19 @@ import { useEffect, useState } from "react";
 import { Plus, Trash2 } from "lucide-react";
 import { api } from "@/lib/api";
 import { useToast } from "@/context/ToastContext";
+import ServicoInsumos from "@/components/ServicoInsumos";
 
 export default function Configuracoes() {
   const toast = useToast();
   const [servicos, setServicos] = useState([]);
   const [profs, setProfs] = useState([]);
+  const [insumos, setInsumos] = useState([]);
   const [svForm, setSvForm] = useState({ nome: "", duracao_minutos: 30, valor: 0 });
   const [prForm, setPrForm] = useState({ nome: "", especialidades: "" });
 
   const load = async () => {
-    const [{ data: s }, { data: p }] = await Promise.all([api.get("/servicos/"), api.get("/profissionais/")]);
-    setServicos(s); setProfs(p);
+    const [{ data: s }, { data: p }, { data: i }] = await Promise.all([api.get("/servicos/"), api.get("/profissionais/"), api.get("/insumos/")]);
+    setServicos(s); setProfs(p); setInsumos(i);
   };
   useEffect(() => { load().catch(() => toast("Erro ao carregar", "error")); /* eslint-disable-next-line */ }, []);
 
@@ -46,13 +48,16 @@ export default function Configuracoes() {
         <section className="card" data-testid="card-servicos">
           <span className="card-eyebrow">Cardápio</span>
           <h3>Serviços</h3>
-          <p className="desc">Cadastre os atendimentos oferecidos.</p>
+          <p className="desc">Cadastre os atendimentos oferecidos e os insumos que cada um consome — o estoque baixa sozinho ao concluir.</p>
           {servicos.map((s) => (
-            <div key={s.id} className="list-item" data-testid={`servico-${s.id}`}>
-              <div className="avatar-sm">{s.nome[0]}</div>
-              <div className="body"><strong>{s.nome}</strong><span className="sub">{s.duracao_minutos} min</span></div>
-              <span className="badge rose">R$ {s.valor.toFixed(2)}</span>
-              <button className="topbar-icon" onClick={() => delServico(s.id)} data-testid={`btn-del-servico-${s.id}`}><Trash2 size={14} /></button>
+            <div key={s.id} className="servico-block" data-testid={`servico-${s.id}`}>
+              <div className="list-item">
+                <div className="avatar-sm">{s.nome[0]}</div>
+                <div className="body"><strong>{s.nome}</strong><span className="sub">{s.duracao_minutos} min</span></div>
+                <span className="badge rose">R$ {s.valor.toFixed(2)}</span>
+                <button className="topbar-icon" onClick={() => delServico(s.id)} data-testid={`btn-del-servico-${s.id}`}><Trash2 size={14} /></button>
+              </div>
+              <ServicoInsumos servico={s} insumos={insumos} />
             </div>
           ))}
           <form onSubmit={addServico} style={{ marginTop: 20 }}>

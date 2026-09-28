@@ -37,6 +37,7 @@ async def _criar_indices() -> None:
     await db.user_sessions.create_index("session_token", unique=True)
     await db.user_sessions.create_index("expires_at", expireAfterSeconds=0)
     await db.agendamentos.create_index([("profissional_id", 1), ("data_hora_inicio", 1)])
+    await db.servico_insumos.create_index([("servico_id", 1), ("insumo_id", 1)], unique=True)
     await db.chat_messages.create_index([("session_id", 1), ("criado_em", 1)])
 
 
@@ -113,6 +114,24 @@ async def _seed_demo() -> None:
                 }
             )
         await db.agendamentos.insert_many(docs)
+
+    if await db.servico_insumos.count_documents({}) == 0:
+        servicos_map = {s["nome"]: s["_id"] async for s in db.servicos.find()}
+        insumos_map = {i["nome"]: i["_id"] async for i in db.insumos.find()}
+        vinculos = [
+            ("Corte Feminino", "Shampoo Profissional", 1),
+            ("Escova", "Shampoo Profissional", 1),
+            ("Coloração", "Coloração Loiro", 1),
+            ("Coloração", "Máscara Hidratante", 1),
+            ("Manicure", "Esmalte Rosa", 1),
+        ]
+        docs = [
+            {"servico_id": servicos_map[s], "insumo_id": insumos_map[i], "quantidade_utilizada": q}
+            for s, i, q in vinculos
+            if s in servicos_map and i in insumos_map
+        ]
+        if docs:
+            await db.servico_insumos.insert_many(docs)
 
     if await db.movimentos_financeiros.count_documents({}) == 0:
         await db.movimentos_financeiros.insert_many(

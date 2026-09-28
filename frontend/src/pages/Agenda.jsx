@@ -66,8 +66,12 @@ export default function Agenda() {
   };
 
   const concluir = async (id) => {
-    try { await api.patch(`/agendamentos/${id}/concluir`); toast("Concluído", "success"); loadAll(); }
-    catch (ex) { toast(ex.response?.data?.detail || "Erro", "error"); }
+    try {
+      const { data } = await api.patch(`/agendamentos/${id}/concluir`);
+      toast("Atendimento concluído — estoque atualizado", "success");
+      (data.alertas_estoque || []).forEach((a) => toast(a, "warning"));
+      loadAll();
+    } catch (ex) { toast(ex.response?.data?.detail || "Erro", "error"); }
   };
   const remover = async (id) => {
     try { await api.delete(`/agendamentos/${id}`); toast("Excluído", "success"); loadAll(); }

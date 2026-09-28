@@ -386,6 +386,50 @@ input, select, textarea { font: inherit; color: inherit; outline: none; }
 .btn-ai:hover { background: var(--gold); color: #fff; }
 .btn-ai:active { transform: scale(.97); }
 .btn-ai:disabled { opacity: .6; cursor: progress; }
+.btn-ai.lg { padding: 11px 18px; font-size: 13px; }
+.btn-inline.primary { background: var(--wine-2); color: #fff; }
+.btn-inline.primary:hover { background: var(--wine); }
+.btn-inline:disabled { opacity: .45; cursor: not-allowed; }
+.btn-inline.small { padding: 8px 14px; font-size: 12.5px; }
+.btn-inline.disabled { opacity: .45; pointer-events: none; }
+
+/* Lembretes de véspera */
+.vespera-card { border-top: 4px solid var(--gold); }
+.vespera-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 20px; flex-wrap: wrap; }
+.vespera-head .desc { margin-bottom: 8px; }
+.vespera-cta { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.vespera-note { display: flex; align-items: flex-start; gap: 10px; background: var(--gold-soft); color: #7a5a24; border-radius: 6px; padding: 12px 14px; font-size: 12.5px; line-height: 1.5; margin: 14px 0 6px; }
+.vespera-note svg { flex: none; margin-top: 2px; color: var(--gold); }
+.vespera-note code { background: rgba(255,255,255,.7); padding: 1px 6px; border-radius: 4px; font-size: 11.5px; }
+.vespera-list { display: grid; gap: 12px; margin-top: 18px; }
+.vespera-row { display: grid; grid-template-columns: minmax(240px, 1.1fr) 2fr auto; gap: 16px; align-items: center; padding: 16px 18px; border: 1px solid var(--line); border-left: 4px solid var(--wine-2); border-radius: 6px; background: #fff; transition: border-color .2s, background .2s; }
+.vespera-row.sent { border-left-color: var(--green); background: #fbfdfb; }
+@media (max-width: 1100px) { .vespera-row { grid-template-columns: 1fr; } }
+.vespera-who { display: flex; align-items: center; gap: 12px; min-width: 0; }
+.vespera-who .body { flex: 1; min-width: 0; }
+.vespera-who strong { display: block; font-size: 14px; }
+.vespera-who .sub { display: block; font-size: 12px; color: var(--muted); margin-top: 2px; }
+.vespera-who .mono-tel { font-family: ui-monospace, monospace; font-size: 11.5px; }
+.vespera-who .badge { display: inline-flex; align-items: center; gap: 4px; white-space: nowrap; }
+.vespera-text { width: 100%; padding: 10px 12px; border: 1px solid var(--line); border-radius: 6px; font-size: 13px; line-height: 1.5; resize: vertical; min-height: 56px; background: var(--paper); transition: border .2s; }
+.vespera-text:focus { border-color: var(--wine-2); background: #fff; }
+.vespera-actions { display: flex; gap: 8px; align-items: center; }
+
+/* Insumos por serviço */
+.servico-block { border-bottom: 1px solid var(--line); }
+.servico-block:last-of-type { border-bottom: 0; }
+.servico-block .list-item { border-bottom: 0; }
+.si-wrap { padding: 0 4px 12px 54px; }
+.si-toggle { display: inline-flex; align-items: center; gap: 6px; background: none; border: 0; padding: 4px 0; font-size: 12px; font-weight: 600; color: var(--wine-2); letter-spacing: .02em; }
+.si-toggle:hover { color: var(--wine); }
+.si-panel { margin-top: 10px; padding: 12px 14px; background: var(--rose-soft); border-radius: 6px; display: grid; gap: 8px; animation: fadeIn .16s ease; }
+.si-empty { font-size: 12.5px; color: var(--muted); line-height: 1.5; }
+.si-row { display: flex; align-items: center; gap: 10px; font-size: 13px; }
+.si-name { flex: 1; font-weight: 600; }
+.si-qty { font-size: 12px; color: var(--muted); white-space: nowrap; }
+.si-form { display: grid; grid-template-columns: 1fr 90px auto; gap: 8px; margin-top: 4px; }
+.si-form select, .si-form input { padding: 9px 10px; border: 1px solid var(--line); border-radius: 4px; background: #fff; font-size: 13px; }
+.si-form select:focus, .si-form input:focus { border-color: var(--wine-2); }
 
 /* Agenda / Calendar */
 .day-strip { display: flex; gap: 10px; overflow-x: auto; padding: 4px 2px 20px; }
@@ -422,6 +466,7 @@ input, select, textarea { font: inherit; color: inherit; outline: none; }
 .toast { background: var(--ink); color: #fff; padding: 12px 18px; border-radius: 24px; font-size: 13px; font-weight: 500; box-shadow: 0 12px 32px rgba(0,0,0,.3); animation: toastIn .18s ease; }
 .toast.success { background: var(--green); }
 .toast.error { background: var(--red); }
+.toast.warning { background: var(--gold); }
 @keyframes toastIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
 
 .empty { padding: 44px 22px; text-align: center; color: var(--muted); }

@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Phone, Send, MessageCircle, Sparkles, RotateCcw, ArrowUp } from "lucide-react";
 import { api, streamSSE } from "@/lib/api";
 import { useToast } from "@/context/ToastContext";
+import LembretesVespera from "@/components/LembretesVespera";
 
 const SESSION_KEY = "elo_chat_session";
 const WELCOME = { role: "assistant", content: "Olá! Sou o Assistente ELO. Posso ajudar com a agenda de hoje, mensagens para clientes, estoque ou finanças. O que você precisa?" };
@@ -194,6 +195,10 @@ export default function Atendimento() {
             <button type="submit" disabled={streaming || !reply.trim()} data-testid="btn-send-reply"><ArrowUp size={16} /></button>
           </form>
         </section>
+      </div>
+
+      <div style={{ marginTop: 20 }}>
+        <LembretesVespera />
       </div>
     </div>
   );

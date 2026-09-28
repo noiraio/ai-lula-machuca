@@ -1,5 +1,6 @@
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from typing import Annotated, Any, Optional
+from zoneinfo import ZoneInfo
 
 from bson import ObjectId
 from bson.errors import InvalidId
@@ -28,6 +29,18 @@ def now() -> datetime:
     return datetime.now(timezone.utc)
 
 
+TZ = ZoneInfo(config.TIMEZONE)
+
+
+def local(dt: datetime) -> datetime:
+    return utc(dt).astimezone(TZ)
+
+
+def janela_dia(offset_dias: int = 0) -> tuple[datetime, datetime]:
+    inicio = now().astimezone(TZ).replace(hour=0, minute=0, second=0, microsecond=0) + timedelta(days=offset_dias)
+    return inicio, inicio + timedelta(days=1)
+
+
 def oid(value: str, detail: str = "Registro não encontrado") -> ObjectId:
     try:
         return ObjectId(value)
@@ -35,10 +48,10 @@ def oid(value: str, detail: str = "Registro não encontrado") -> ObjectId:
         raise HTTPException(status_code=404, detail=detail)
 
 
-class BaseDocument(BaseModel):
-    model_config = ConfigDict(populate_by_name=True)
+class MongoModel(BaseModel):
+    """Normaliza ObjectId → str e datetimes naive (UTC) → aware em qualquer nível."""
 
-    id: Optional[PyObjectId] = Field(default=None, validation_alias=AliasChoices("_id", "id"))
+    model_config = ConfigDict(populate_by_name=True)
 
     @field_validator("*", mode="before")
     @classmethod
@@ -46,6 +59,10 @@ class BaseDocument(BaseModel):
         if isinstance(v, datetime):
             return utc(v)
         return _to_str(v)
+
+
+class BaseDocument(MongoModel):
+    id: Optional[PyObjectId] = Field(default=None, validation_alias=AliasChoices("_id", "id"))
 
     def to_mongo(self) -> dict:
         return self.model_dump(exclude={"id"}, exclude_none=True)
