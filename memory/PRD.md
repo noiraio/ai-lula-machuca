@@ -54,6 +54,7 @@ usuarios, user_sessions, clientes, profissionais, servicos, insumos, servico_ins
   - **Confirmação automática** — card "Lembretes de amanhã" no Atendimento: lista agendamentos de amanhã (fuso `APP_TIMEZONE`), "Gerar todas com IA" (SSE paralelo, 3 simultâneas), mensagem editável, envio via wa.me (marca enviado + registra em `lembretes`) e envio automático **Twilio** (opcional: ativa ao preencher `TWILIO_*` no .env; sem chaves → 503 + botões desabilitados + aviso). Módulo isolado `services/whatsapp.py` + guia `INTEGRACAO_WHATSAPP.md`
   - **Insumos por serviço** — Configurações: seção expansível por serviço (vincular/upsert/remover `servico_insumos`); concluir agendamento deduz estoque (409 se insuficiente, não deduz 2x) e mostra toasts de alerta; alertas de demanda no Estoque ativos; quantidades de insumo aceitam decimais
   - Testes: iteration_2 — 17/17 backend + frontend OK
+- 2026-06 (sessão 3, entrega): `README.md` completo (estrutura + setup local), `.env.example` (backend/frontend), `.vscode/` (launch/settings/extensions), e **`ELO_BEAUTY_CARE_PROJETO_COMPLETO.py`** — projeto inteiro (126 arquivos) em um único arquivo autoextraível (`python ELO_BEAUTY_CARE_PROJETO_COMPLETO.py` recria a estrutura). Gerador em `memory/gerar_bundle.py` (rodar de novo após mudanças no código).
 
 ## Backlog
 - P1: IA nas demais telas (Resumo do dia na Agenda, Análise de reposição no Estoque, Insights no Financeiro, bio no Perfil, sugestão de serviços em Configurações) — proposto, usuário optou por começar só pelo Atendimento
